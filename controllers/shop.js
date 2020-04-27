@@ -8,7 +8,7 @@ const Product = require('../models/product');
 
 
 exports.getProducts = (req, res, next) => {
-    Product.fetchAll()
+    Product.find()
         .then(products => {
         res.render('shop/product-list', { 
             prods: products,
@@ -27,21 +27,12 @@ exports.getProducts = (req, res, next) => {
    
 };
 
+// Extracting single Product
 exports.getProduct = (req, res, next) => {
     const prodId = req.params.productId;
-    
-    // Product.findAll({ where: { id: prodId } }).then((products) => {
-    //     //console.log(products[1].tittle);
-    //     res.render('shop/product-detail',{
-    //         product: products[0], 
-    //         pageTitle: products[0].tittle,
-    //         path: '/products'});
-    // }).catch(err => console.log(err));
-
-
     Product.findById(prodId)
     .then(product => {      
-        
+      
         res.render('shop/product-detail',{
             product: product, 
             pageTitle: product.title,
@@ -57,7 +48,8 @@ exports.getProduct = (req, res, next) => {
 
 exports.getIndex = (req, res, next) => {
 
-   Product.fetchAll().then(products => {
+   Product.find()
+   .then(products => {
     res.render('shop/index', { 
         prods: products,
         pageTitle: 'Shops',

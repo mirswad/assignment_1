@@ -8,8 +8,7 @@ const PNFController = require('./controllers/error');
 
 const User = require('./models/user');
 
-const mongoConnect = require('./util/databases').mongoConnect;
-
+const mongoose = require('mongoose');
 //const expressHbr = require('express-handlebars');
 
 //app.engine('hbs', expressHbr({ layoutsDir:'views/layouts/', extname:'hbs', defaultLayout:'main-layout'}));
@@ -22,9 +21,9 @@ const shopRoutes = require('./routes/shop');
 
 
 app.use((req, res, next) => {
- User.findById('5e956a9c8a1df43870dca832')
+ User.findById('5ea6a2ad53084a2ec8060054')
  .then(user => {
-     req.user = new User(user.name, user.email, user.cart, user._id);
+     req.user = user;
     next();
  })
  .catch(err => console.log(err));
@@ -40,10 +39,24 @@ app.use(shopRoutes);
 
 app.use(PNFController.pnf);
 
-//Associations
-mongoConnect(() => {          
-        app.listen(3000); 
-   });
-
-
+mongoose.connect('mongodb+srv://admin:admin@cluster0-sm6lw.mongodb.net/shop')
+.then(result => {
+    User.findOne().then(user => {
+        if(!user){
+            const user = new User({
+                name: 'Mirswad',
+                email: 'mirsadkm@gmail.com',
+                cart: {
+                    items: []
+                }
+            });
+            user.save();
+        }
+    });
+    app.listen(3000);
+    console.log('connected with mongo db');  
+   
+}).catch(err => {
+    console.log(err);
+});
 
